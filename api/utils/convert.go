@@ -6,10 +6,25 @@ import (
 )
 
 const (
-	WeiDecimalPlaces = 1e18
+	WeiDecimals int8 = 18
 )
 
-func ConvertStringToBNB(amount string) (float64, error) {
+func ConvertWeiToMain(amount string) (float64, error) {
+	return ConvertStringToAmount(amount, WeiDecimals)
+}
+
+func getDivider(decimals int8) float64 {
+	if decimals == 0 {
+		return 1
+	}
+	divider := float64(10)
+	for i := int8(0); i < decimals; i++ {
+		divider *= 10
+	}
+	return divider
+}
+
+func ConvertStringToAmount(amount string, decimals int8) (float64, error) {
 	if amount == "" {
 		return 0, errors.New("cannot convert empty string")
 	}
@@ -19,7 +34,7 @@ func ConvertStringToBNB(amount string) (float64, error) {
 		return 0, err
 	}
 
-	return converted / WeiDecimalPlaces, nil
+	return converted / getDivider(decimals), nil
 }
 
 func ComputeFee(gasUsed string, gasPrice string) (float64, error) {
@@ -37,5 +52,7 @@ func ComputeFee(gasUsed string, gasPrice string) (float64, error) {
 		return 0, err
 	}
 
-	return gasPriceConverted * gasUsedConverted / WeiDecimalPlaces, nil
+	fee := gasPriceConverted * gasUsedConverted / getDivider(WeiDecimals)
+
+	return fee, nil
 }

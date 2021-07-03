@@ -35,15 +35,6 @@ type response struct {
 	Result  interface{} `json:"result"`
 }
 
-type BalanceResult struct {
-	result string
-}
-
-type BalanceOptions struct {
-	Limit int `json:"limit"`
-	Page  int `json:"page"`
-}
-
 func (c *Client) sendRequest(queryValues url.Values, v interface{}) error {
 	base, err := url.Parse(c.BaseURL)
 	if err != nil {
